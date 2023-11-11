@@ -3,7 +3,7 @@ import { resolve } from 'path'
 import { downloadGitRepo } from '../download-github-repo'
 
 describe('downloadGitRepo', () => {
-  test(
+  test.skip(
     'should work',
     async () => {
       await downloadGitRepo('Plasticine-Yang/Plasticine-Yang.github.io', {

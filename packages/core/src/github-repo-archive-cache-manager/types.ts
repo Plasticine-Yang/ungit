@@ -1,4 +1,4 @@
-export interface GithubRepoManagerCacheManagerOptions {
+export interface GithubRepoArchiveCacheManagerOptions {
   /**
    * 缓存目录
    *

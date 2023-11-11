@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { mkdir, stat, writeFile } from 'fs/promises'
+import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
 
 import { GithubRepoResolver } from '../github-repo-resolver'
+import { ensureDirectoryExist } from '../helpers'
 import { resolveDownloadGitRepoOptions } from './resolve-options'
 import type { DownloadGitRepoOptions } from './types'
 
@@ -14,11 +15,7 @@ export async function downloadGitRepo(userRepo: string, options?: DownloadGitRep
   const resolvedOutputPath = resolve(outputPath!)
 
   // 确保输出目录存在
-  try {
-    await stat(resolvedOutputPath)
-  } catch {
-    await mkdir(resolvedOutputPath, { recursive: true })
-  }
+  await ensureDirectoryExist(resolvedOutputPath)
 
   const githubRepoResolver = new GithubRepoResolver(userRepo)
   const targetGithubRepoInfo = await githubRepoResolver.resolveGithubRepoInfo(githubRepoInfoQuery)

@@ -1,9 +1,9 @@
 import { DEFAULT_CACHE_PATH } from './constants'
-import { GithubRepoManagerCacheManagerOptions } from './types'
+import { GithubRepoArchiveCacheManagerOptions } from './types'
 
 export function resolveGithubRepoManagerCacheManagerOptions(
-  options?: GithubRepoManagerCacheManagerOptions,
-): Required<GithubRepoManagerCacheManagerOptions> {
+  options?: GithubRepoArchiveCacheManagerOptions,
+): Required<GithubRepoArchiveCacheManagerOptions> {
   return {
     cachePath: options?.cachePath ?? DEFAULT_CACHE_PATH,
   }
