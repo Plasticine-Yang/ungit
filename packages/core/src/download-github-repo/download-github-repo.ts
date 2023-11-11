@@ -10,7 +10,7 @@ import type { DownloadGitRepoOptions } from './types'
  * 下载 Github 仓库到指定目录
  */
 export async function downloadGitRepo(userRepo: string, options?: DownloadGitRepoOptions) {
-  const { outputPath, resolveGithubRepoArchiveUrlOptions, onProgress } = resolveDownloadGitRepoOptions(options)
+  const { outputPath, githubRepoInfoQuery, onProgress } = resolveDownloadGitRepoOptions(options)
   const resolvedOutputPath = resolve(outputPath!)
 
   // 确保输出目录存在
@@ -21,7 +21,14 @@ export async function downloadGitRepo(userRepo: string, options?: DownloadGitRep
   }
 
   const githubRepoResolver = new GithubRepoResolver(userRepo)
-  const archiveUrl = await githubRepoResolver.resolveGithubRepoArchiveUrl(resolveGithubRepoArchiveUrlOptions)
+  const targetGithubRepoInfo = await githubRepoResolver.resolveGithubRepoInfo(githubRepoInfoQuery)
+
+  if (targetGithubRepoInfo === null) {
+    throw new Error('refs does not exist', { cause: githubRepoInfoQuery })
+  }
+
+  const { hash } = targetGithubRepoInfo
+  const archiveUrl = await githubRepoResolver.resolveGithubRepoArchiveUrl(hash)
   const filename = archiveUrl.split('/').at(-1) ?? `unknown-archive-filename-${Date.now()}.tar.gz`
 
   const response = await axios.get(archiveUrl, {

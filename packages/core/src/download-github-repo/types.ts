@@ -1,4 +1,4 @@
-import type { ResolveGithubRepoArchiveUrlOptions } from '../github-repo-resolver'
+import { GithubRepoInfoQuery } from '../github-repo-resolver'
 
 export type DownloadGitRepoOptions = {
   /**
@@ -8,8 +8,12 @@ export type DownloadGitRepoOptions = {
    */
   outputPath?: string
 
-  /** 解析仓库压缩包下载链接的参数 */
-  resolveGithubRepoArchiveUrlOptions?: ResolveGithubRepoArchiveUrlOptions
+  /**
+   * 用于查询需要下载的 GithubRepoInfo
+   *
+   * @default HEAD reference
+   */
+  githubRepoInfoQuery?: GithubRepoInfoQuery
 
   onProgress?: (downloadedSize: number, totalSize: number) => void
 }

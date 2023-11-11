@@ -1,7 +1,8 @@
 import { resolveGithubRepoArchiveUrl } from './resolve-github-repo-archive-url'
+import { resolveGithubRepoInfo } from './resolve-github-repo-info'
 import { resolveGithubRepoInfoList } from './resolve-github-repo-info-list'
 import { resolveGithubRepoUrl } from './resolve-github-repo-url'
-import type { GithubRepoInfo, ResolveGithubRepoArchiveUrlOptions } from './types'
+import type { GithubRepoInfo, GithubRepoInfoQuery } from './types'
 
 export class GithubRepoResolver {
   private githubRepoInfoList: GithubRepoInfo[] | null
@@ -25,13 +26,13 @@ export class GithubRepoResolver {
     return this.githubRepoInfoList
   }
 
-  public async resolveGithubRepoArchiveUrl(options?: ResolveGithubRepoArchiveUrlOptions) {
-    try {
-      const githubRepoInfoList = await this.resolveGithubRepoInfoList()
+  public async resolveGithubRepoInfo(query?: GithubRepoInfoQuery) {
+    const githubRepoInfoList = await this.resolveGithubRepoInfoList()
 
-      return resolveGithubRepoArchiveUrl(this.userRepo, githubRepoInfoList, options)
-    } catch (error) {
-      throw new Error('resolve github repository info failed', { cause: error })
-    }
+    return resolveGithubRepoInfo(githubRepoInfoList, query)
+  }
+
+  public async resolveGithubRepoArchiveUrl(hash: string) {
+    return resolveGithubRepoArchiveUrl(this.userRepo, hash)
   }
 }

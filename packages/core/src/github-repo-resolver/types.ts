@@ -6,21 +6,13 @@ export interface GithubRepoInfo {
   hash: string
 }
 
-export interface ResolveGithubRepoArchiveUrlOptions {
-  /** 获取指定 hash 的下载链接 - 优先级最高 */
+/**
+ * 根据以下信息查询对应的 GithubRepoInfo 对象
+ */
+export interface GithubRepoInfoQuery {
+  /** 根据 hash 查询 - 优先级最高 */
   hash?: string
 
-  /**
-   * 获取哪种类型的 reference 对应的下载链接
-   *
-   * @default GithubRepoInfoType.HEAD
-   */
-  referenceType?: GithubRepoInfoType
-
-  /**
-   * 获取对应 reference 类型的 referenceName 的下载链接
-   *
-   * @default "HEAD"
-   */
-  referenceName?: string
+  /** 根据 reference 查询 */
+  reference?: Pick<GithubRepoInfo, 'type' | 'name'>
 }

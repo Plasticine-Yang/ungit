@@ -1,7 +1,7 @@
 import { exec } from 'child_process'
 
-import { type GithubRepoInfo } from '../github-repo-info'
 import { resolveGitLsRemoteStdout } from './resolve-git-ls-remote-stdout'
+import type { GithubRepoInfo } from './types'
 
 /**
  * 获取 Github 仓库信息，比如有哪些分支、哪些 tag 以及对应的 hash

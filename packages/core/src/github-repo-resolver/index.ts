@@ -1,2 +1,3 @@
+export * from './constants'
 export * from './github-repo-resolver'
-export * from './types'
+export type * from './types'
