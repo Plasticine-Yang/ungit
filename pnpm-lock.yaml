@@ -60,6 +60,12 @@ importers:
         specifier: ^0.34.1
         version: 0.34.1
 
+  apps/cli:
+    dependencies:
+      '@ungit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   apps/playground:
     devDependencies:
       typescript:
