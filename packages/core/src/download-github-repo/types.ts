@@ -1,6 +1,6 @@
-import type { GithubRepoInfoType } from '../github-repo-info'
+import type { ResolveGithubRepoArchiveUrlOptions } from '../github-repo-resolver'
 
-export type DownloadGitRepoOptions = ResolveGithubRepoArchiveUrlOptions & {
+export type DownloadGitRepoOptions = {
   /**
    * 下载的输出目录
    *
@@ -8,24 +8,8 @@ export type DownloadGitRepoOptions = ResolveGithubRepoArchiveUrlOptions & {
    */
   outputPath?: string
 
+  /** 解析仓库压缩包下载链接的参数 */
+  resolveGithubRepoArchiveUrlOptions?: ResolveGithubRepoArchiveUrlOptions
+
   onProgress?: (downloadedSize: number, totalSize: number) => void
-}
-
-export interface ResolveGithubRepoArchiveUrlOptions {
-  /** 获取指定 hash 的下载链接 - 优先级最高 */
-  hash?: string
-
-  /**
-   * 获取哪种类型的 reference 对应的下载链接
-   *
-   * @default GithubRepoInfoType.HEAD
-   */
-  referenceType?: GithubRepoInfoType
-
-  /**
-   * 获取对应 reference 类型的 referenceName 的下载链接
-   *
-   * @default "HEAD"
-   */
-  referenceName?: string
 }

@@ -1,9 +1,10 @@
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
 
-import { GithubRepoInfo, GithubRepoInfoType } from '../../github-repo-info'
+import { GithubRepoInfoType } from '../enum'
 import { resolveGitLsRemoteStdout } from '../resolve-git-ls-remote-stdout'
 import { resolveGithubRepoArchiveUrl } from '../resolve-github-repo-archive-url'
+import type { GithubRepoInfo } from '../types'
 
 describe('resolveGithubRepoArchiveUrl', () => {
   let githubRepoInfoList: GithubRepoInfo[]

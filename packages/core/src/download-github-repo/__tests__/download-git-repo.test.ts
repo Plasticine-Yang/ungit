@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 
-import { downloadGitRepo } from '../../download-github-repo'
+import { downloadGitRepo } from '../download-github-repo'
 
 describe('downloadGitRepo', () => {
   test(

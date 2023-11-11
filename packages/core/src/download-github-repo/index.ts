@@ -1,1 +1,1 @@
-export { downloadGitRepo } from './main'
+export { downloadGitRepo } from './download-github-repo'

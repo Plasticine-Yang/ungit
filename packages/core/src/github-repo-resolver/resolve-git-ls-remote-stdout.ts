@@ -1,4 +1,5 @@
-import { type GithubRepoInfo, GithubRepoInfoType } from '../github-repo-info'
+import { GithubRepoInfoType } from './enum'
+import type { GithubRepoInfo } from './types'
 
 export function resolveGitLsRemoteStdout(stdout: string): GithubRepoInfo[] {
   const githubRepoInfoList: GithubRepoInfo[] = []
