@@ -4,5 +4,5 @@ export interface GithubRepoArchiveCacheManagerOptions {
    *
    * @default "$HOME/.ungit"
    */
-  cachePath?: string
+  cacheDirectoryPath?: string
 }

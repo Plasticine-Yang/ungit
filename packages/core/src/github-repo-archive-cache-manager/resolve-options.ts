@@ -1,10 +1,10 @@
-import { DEFAULT_CACHE_PATH } from './constants'
+import { DEFAULT_CACHE_DIRECTORY_PATH } from '@ungit/shared'
 import { GithubRepoArchiveCacheManagerOptions } from './types'
 
 export function resolveGithubRepoManagerCacheManagerOptions(
   options?: GithubRepoArchiveCacheManagerOptions,
 ): Required<GithubRepoArchiveCacheManagerOptions> {
   return {
-    cachePath: options?.cachePath ?? DEFAULT_CACHE_PATH,
+    cacheDirectoryPath: options?.cacheDirectoryPath ?? DEFAULT_CACHE_DIRECTORY_PATH,
   }
 }

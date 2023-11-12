@@ -7,7 +7,7 @@ import type { ExtractTarGZOptions } from './types'
 export function extractTarGZ(tarGZFilePath: string, targetDirectoryPath: string, options?: ExtractTarGZOptions) {
   const { subDirectory } = resolveExtractTarGZOptions(options)
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const performWork = async () => {
       await ensureDirectoryExist(targetDirectoryPath)
 
@@ -23,7 +23,7 @@ export function extractTarGZ(tarGZFilePath: string, targetDirectoryPath: string,
           if (error) {
             reject(error)
           } else {
-            resolve(null)
+            resolve(void 0)
           }
         },
       )

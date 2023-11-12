@@ -13,7 +13,7 @@ export class GithubRepoArchiveCacheManager {
   }
 
   private resolveCachedArchivePath(userRepo: string, hash: string) {
-    const { cachePath } = this.resolvedOptions
+    const { cacheDirectoryPath: cachePath } = this.resolvedOptions
     const cachedArchivePath = resolve(cachePath, userRepo, `${hash}.tar.gz`)
 
     return cachedArchivePath
@@ -21,7 +21,7 @@ export class GithubRepoArchiveCacheManager {
 
   /** 查询缓存目录下是否缓存了相关文件 */
   public async hasCached(userRepo: string, hash: string) {
-    const { cachePath } = this.resolvedOptions
+    const { cacheDirectoryPath: cachePath } = this.resolvedOptions
     const cacheFilePath = resolve(cachePath, userRepo, `${hash}.tar.gz`)
 
     try {
@@ -35,7 +35,7 @@ export class GithubRepoArchiveCacheManager {
 
   /** 将仓库压缩包缓存到缓存目录中 */
   public async cacheRepoArchive(archivePath: string, userRepo: string, hash: string) {
-    const { cachePath } = this.resolvedOptions
+    const { cacheDirectoryPath: cachePath } = this.resolvedOptions
     const userRepoPath = resolve(cachePath, userRepo)
     const cachedArchivePath = this.resolveCachedArchivePath(userRepo, hash)
     const archiveFilename = `${hash}.tar.gz`
@@ -64,7 +64,7 @@ export class GithubRepoArchiveCacheManager {
 
   /** 获取缓存文件的路径 */
   public async getCachedRepoArchivePath(userRepo: string, hash: string) {
-    const { cachePath } = this.resolvedOptions
+    const { cacheDirectoryPath: cachePath } = this.resolvedOptions
     const cachedArchivePath = resolve(cachePath, userRepo, `${hash}.tar.gz`)
 
     try {

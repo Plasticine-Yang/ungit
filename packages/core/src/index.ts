@@ -1,4 +1,5 @@
 export { downloadGitRepo, type DownloadGitRepoOptions } from './download-github-repo'
+export { extractTarGZ, type ExtractTarGZOptions } from './extract-tar-gz'
 export {
   GithubRepoArchiveCacheManager,
   type GithubRepoArchiveCacheManagerOptions,

@@ -5,7 +5,7 @@ describe('GithubRepoCacheManager', () => {
   let manager: GithubRepoArchiveCacheManager
 
   beforeAll(() => {
-    manager = new GithubRepoArchiveCacheManager({ cachePath: resolve(__dirname, 'fixtures/.ungit') })
+    manager = new GithubRepoArchiveCacheManager({ cacheDirectoryPath: resolve(__dirname, 'fixtures/.ungit') })
   })
 
   test('should cache repo archive', async () => {

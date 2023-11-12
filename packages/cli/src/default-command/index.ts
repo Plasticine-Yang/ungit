@@ -1,0 +1,1 @@
+export { registerDefaultCommand } from './register'

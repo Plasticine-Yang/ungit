@@ -27,6 +27,7 @@ export async function downloadGitRepo(userRepo: string, options?: DownloadGitRep
   const { hash } = targetGithubRepoInfo
   const archiveUrl = await githubRepoResolver.resolveGithubRepoArchiveUrl(hash)
   const filename = archiveUrl.split('/').at(-1) ?? `unknown-archive-filename-${Date.now()}.tar.gz`
+  const downloadedFilePath = resolve(outputPath!, filename)
 
   const response = await axios.get(archiveUrl, {
     responseType: 'arraybuffer',
@@ -37,5 +38,10 @@ export async function downloadGitRepo(userRepo: string, options?: DownloadGitRep
     },
   })
 
-  await writeFile(resolve(outputPath!, filename), response.data)
+  await writeFile(downloadedFilePath, response.data)
+
+  return {
+    downloadedFilePath,
+    downloadedGithubRepoInfo: targetGithubRepoInfo,
+  }
 }
