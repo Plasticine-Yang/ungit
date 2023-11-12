@@ -1,6 +1,6 @@
+import { ensureDirectoryExist } from '@ungit/shared'
 import { extract } from 'tar'
 
-import { ensureDirectoryExist } from '../helpers'
 import { resolveExtractTarGZOptions } from './resolve-options'
 import type { ExtractTarGZOptions } from './types'
 

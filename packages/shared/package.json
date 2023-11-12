@@ -1,6 +1,7 @@
 {
-  "name": "@ungit/core",
+  "name": "@ungit/shared",
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "files": [
     "dist"
@@ -20,14 +21,5 @@
     "build": "tsup --dts",
     "lint": "eslint src --fix",
     "test": "vitest"
-  },
-  "dependencies": {
-    "@ungit/shared": "workspace:*",
-    "axios": "^1.6.1",
-    "tar": "^6.1.9",
-    "zlib": "^1.0.5"
-  },
-  "devDependencies": {
-    "@types/tar": "^6.1.9"
   }
 }

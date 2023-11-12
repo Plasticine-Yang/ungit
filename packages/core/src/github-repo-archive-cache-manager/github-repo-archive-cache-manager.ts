@@ -1,9 +1,9 @@
+import { ensureDirectoryExist } from '@ungit/shared'
 import { copyFile, rm, stat } from 'fs/promises'
 import { resolve } from 'path'
 
 import { resolveGithubRepoManagerCacheManagerOptions } from './resolve-options'
 import type { GithubRepoArchiveCacheManagerOptions } from './types'
-import { ensureDirectoryExist } from '../helpers'
 
 export class GithubRepoArchiveCacheManager {
   private resolvedOptions: Required<GithubRepoArchiveCacheManagerOptions>

@@ -1,9 +1,9 @@
+import { ensureDirectoryExist } from '@ungit/shared'
 import axios from 'axios'
 import { writeFile } from 'fs/promises'
 import { resolve } from 'path'
 
 import { GithubRepoResolver } from '../github-repo-resolver'
-import { ensureDirectoryExist } from '../helpers'
 import { resolveDownloadGitRepoOptions } from './resolve-options'
 import type { DownloadGitRepoOptions } from './types'
 
