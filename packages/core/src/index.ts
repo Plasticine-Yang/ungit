@@ -1,4 +1,4 @@
-export { downloadGitRepo, type DownloadGitRepoArchiveOptions } from './download-github-repo-archive'
+export { downloadGithubRepoArchive, type DownloadGitRepoArchiveOptions } from './download-github-repo-archive'
 export { extractTarGZ, type ExtractTarGZOptions } from './extract-tar-gz'
 export {
   GithubRepoArchiveCacheManager,

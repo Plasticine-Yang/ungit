@@ -1,14 +1,16 @@
 import {
   GithubRepoArchiveCacheManager,
   GithubRepoResolver,
-  downloadGitRepo,
+  downloadGithubRepoArchive,
   extractTarGZ,
   type GithubRepoArchive,
 } from '@ungit/core'
 import { ensureDirectoryExist } from '@ungit/shared'
-
 import { rm } from 'fs/promises'
+import ora from 'ora'
+import chalk from 'chalk'
 import { resolve } from 'path'
+
 import { TEMP_DIRECTORY_ROOT_PATH } from './constants'
 import {
   resolveDefaultCommandOptions,
@@ -52,16 +54,17 @@ export async function defaultCommandAction(
   const cachedRepoArchivePath = await manager.getCachedRepoArchivePath(userRepo, githubRepoRef.hash)
 
   if (cachedRepoArchivePath) {
-    console.log('缓存命中')
+    console.log(chalk.cyan('cache hit!'))
     try {
       const resolvedSubDirectory = resolveSubDirectory(repo, githubRepoRef.hash, subDirectory)
       extractTarGZ(cachedRepoArchivePath, outputPath, { subDirectory: resolvedSubDirectory })
-    } catch (error) {
+    } catch {
+      console.log(chalk.red('extract cached tar.gz file error'))
       // 提取失败时兜底触发下载逻辑
       await downloadToTempDirectory(githubRepoArchive, outputPath, downloadToTempDirectoryOptions)
     }
   } else {
-    console.log('没有缓存')
+    console.log(chalk.yellow('cache not found'))
     await downloadToTempDirectory(githubRepoArchive, outputPath, downloadToTempDirectoryOptions)
   }
 }
@@ -79,26 +82,29 @@ async function downloadToTempDirectory(
   const tempDirectoryPath = resolve(TEMP_DIRECTORY_ROOT_PATH, userRepo)
   const githubRepoArchiveCacheManager = new GithubRepoArchiveCacheManager({ cacheDirectoryPath })
 
+  const spinner = ora()
+
   // 确保临时目录存在
   await ensureDirectoryExist(tempDirectoryPath)
 
   // 下载文件到临时目录中
-  console.log('downloading...')
-  const downloadedFilePath = await downloadGitRepo(githubRepoArchive, {
+  spinner.start('Downloading...')
+  const downloadedFilePath = await downloadGithubRepoArchive(githubRepoArchive, {
     outputPath: tempDirectoryPath,
-    onProgress(downloadedSize, totalSize) {
-      console.log(downloadedSize, totalSize)
-    },
   })
-  console.log('download success')
+  spinner.succeed('Download successfully!')
 
   // 提取指定文件到 outputPath - github 下载的压缩包会有一个 repo-hash 的一级目录，要与外部传入的子目录拼接才能作为真正的子目录
+  spinner.start('Extracting...')
   const resolvedSubDirectory = resolveSubDirectory(repo, githubRepoRef.hash, subDirectory)
   await extractTarGZ(downloadedFilePath, outputPath, { subDirectory: resolvedSubDirectory })
+  spinner.succeed(`Extract to ${outputPath} successfully!`)
 
   // 如果启用了缓存则将下载的文件缓存到缓存目录中
   if (cache) {
+    spinner.start('Caching...')
     await githubRepoArchiveCacheManager.cacheRepoArchive(downloadedFilePath, userRepo, githubRepoRef.hash)
+    spinner.succeed('Cache successfully!')
   }
 
   // 删除临时目录

@@ -27,6 +27,8 @@
   "dependencies": {
     "@ungit/core": "workspace:*",
     "@ungit/shared": "workspace:*",
-    "cac": "^6.7.14"
+    "cac": "^6.7.14",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1"
   }
 }
