@@ -1,5 +1,11 @@
 # @ungit/shared
 
+## 0.0.2
+
+### Patch Changes
+
+- Minify dist
+
 ## 0.0.1
 
 ### Patch Changes
