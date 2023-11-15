@@ -1,22 +1,22 @@
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
 
-import { GithubRepoInfoType } from '../enum'
-import { resolveGitLsRemoteStdout } from '../resolve-git-ls-remote-stdout'
-import { resolveGithubRepoInfo } from '../resolve-github-repo-info'
-import { GithubRepoInfo } from '../types'
+import { GithubRepoRefType } from '../enum'
+import { resolveGithubRepoRefsFromGitLsRemoteStdout } from '../resolve-git-ls-remote-stdout'
+import { resolveGithubRepoRef } from '../resolve-github-repo-info'
+import { GithubRepoRef } from '../types'
 
-describe('resolveGithubRepoInfo', () => {
-  let githubRepoInfoList: GithubRepoInfo[]
+describe('resolveGithubRepoRef', () => {
+  let githubRepoRefs: GithubRepoRef[]
 
   beforeAll(async () => {
     const stdout = await readFile(resolve(__dirname, 'fixtures/git-ls-remote-stdout.txt'), 'utf-8')
-    githubRepoInfoList = resolveGitLsRemoteStdout(stdout)
+    githubRepoRefs = resolveGithubRepoRefsFromGitLsRemoteStdout(stdout)
   })
 
   test('should be resolved with HEAD refs', async () => {
-    const result = resolveGithubRepoInfo(githubRepoInfoList, {
-      reference: { type: GithubRepoInfoType.HEAD, name: 'HEAD' },
+    const result = resolveGithubRepoRef(githubRepoRefs, {
+      reference: { type: GithubRepoRefType.HEAD, name: 'HEAD' },
     })
 
     expect(result).toMatchInlineSnapshot(`
@@ -29,16 +29,22 @@ describe('resolveGithubRepoInfo', () => {
   })
 
   test('should be resolved with branch refs', () => {
-    const result = resolveGithubRepoInfo(githubRepoInfoList, {
-      reference: { type: GithubRepoInfoType.Branch, name: 'feat/plasticine-react' },
+    const result = resolveGithubRepoRef(githubRepoRefs, {
+      reference: { type: GithubRepoRefType.Branch, name: 'feat/plasticine-react' },
     })
 
-    expect(result).toMatchInlineSnapshot('null')
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "hash": "1b340ab7654f2b6d6f7aba0ecfec8c8fac4c6c21",
+        "name": "feat/plasticine-react",
+        "type": "branch",
+      }
+    `)
   })
 
   test('should be resolved with tag refs', () => {
-    const result = resolveGithubRepoInfo(githubRepoInfoList, {
-      reference: { type: GithubRepoInfoType.Tag, name: 'v0.0.1' },
+    const result = resolveGithubRepoRef(githubRepoRefs, {
+      reference: { type: GithubRepoRefType.Tag, name: 'v0.0.1' },
     })
 
     expect(result).toMatchInlineSnapshot(`
@@ -51,7 +57,7 @@ describe('resolveGithubRepoInfo', () => {
   })
 
   test('should be resolved with hash', () => {
-    const result = resolveGithubRepoInfo(githubRepoInfoList, {
+    const result = resolveGithubRepoRef(githubRepoRefs, {
       hash: 'a5232feef1a585974b4faecdfc053d626be945a8',
     })
 
@@ -65,12 +71,12 @@ describe('resolveGithubRepoInfo', () => {
   })
 
   test('should be resolved when hash and references both exist, and hash has higher priority', () => {
-    const result = resolveGithubRepoInfo(githubRepoInfoList, {
+    const result = resolveGithubRepoRef(githubRepoRefs, {
       // hash of v0.0.2 tag
       hash: 'a5232feef1a585974b4faecdfc053d626be945a8',
 
       // v0.0.1 tag
-      reference: { type: GithubRepoInfoType.Tag, name: 'v0.0.1' },
+      reference: { type: GithubRepoRefType.Tag, name: 'v0.0.1' },
     })
 
     expect(result).toMatchInlineSnapshot(`
@@ -83,7 +89,7 @@ describe('resolveGithubRepoInfo', () => {
   })
 
   test('should be resolved with HEAD by default', async () => {
-    const result = resolveGithubRepoInfo(githubRepoInfoList)
+    const result = resolveGithubRepoRef(githubRepoRefs)
 
     expect(result).toMatchInlineSnapshot(`
       {

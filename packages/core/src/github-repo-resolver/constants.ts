@@ -1,9 +1,9 @@
-import { GithubRepoInfoType } from './enum'
-import type { GithubRepoInfoQuery } from './types'
+import { GithubRepoRefType } from './enum'
+import type { GithubRepoRefQuery } from './types'
 
-export const DEFAULT_GITHUB_REPO_INFO_QUERY: GithubRepoInfoQuery = {
+export const DEFAULT_GITHUB_REPO_REF_QUERY: GithubRepoRefQuery = {
   reference: {
-    type: GithubRepoInfoType.HEAD,
+    type: GithubRepoRefType.HEAD,
     name: 'HEAD',
   },
 }

@@ -1,25 +1,24 @@
-import { DEFAULT_GITHUB_REPO_INFO_QUERY } from './constants'
-import type { GithubRepoInfo } from './types'
+import { DEFAULT_GITHUB_REPO_REF_QUERY } from './constants'
+import type { GithubRepoRef } from './types'
 
-export function resolveGithubRepoInfo(githubRepoInfoList: GithubRepoInfo[], query = DEFAULT_GITHUB_REPO_INFO_QUERY) {
+export function resolveGithubRepoRef(githubRepoRefs: GithubRepoRef[], query = DEFAULT_GITHUB_REPO_REF_QUERY) {
   const { hash, reference } = query
 
-  let targetGithubRepoInfo: GithubRepoInfo | null = null
+  let targetGithubRepoRef: GithubRepoRef | null = null
 
   if (hash) {
-    targetGithubRepoInfo = githubRepoInfoList.find((repoInfo) => repoInfo.hash === hash) ?? null
+    targetGithubRepoRef = githubRepoRefs.find((ref) => ref.hash === hash) ?? null
   } else if (reference) {
     const { type, name } = reference
 
-    targetGithubRepoInfo =
-      githubRepoInfoList.find((repoInfo) => repoInfo.type === type && repoInfo.name === name) ?? null
+    targetGithubRepoRef = githubRepoRefs.find((ref) => ref.type === type && ref.name === name) ?? null
   } else {
-    targetGithubRepoInfo = null
+    targetGithubRepoRef = null
   }
 
-  if (targetGithubRepoInfo === null) {
-    throw new Error('github repo info not found')
+  if (targetGithubRepoRef === null) {
+    throw new Error('github repo ref not found', { cause: query })
   }
 
-  return targetGithubRepoInfo
+  return targetGithubRepoRef
 }

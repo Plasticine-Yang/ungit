@@ -5,14 +5,14 @@ import { resolve } from 'path'
 
 import type { GithubRepoArchive } from '../github-repo-resolver'
 import { DEFAULT_OUTPUT_PATH } from './constants'
-import type { DownloadGitRepoOptions } from './types'
+import type { DownloadGitRepoArchiveOptions } from './types'
 
 /**
  * 下载 Github 仓库压缩包
  */
 export async function downloadGithubRepoArchive(
   githubRepoArchive: GithubRepoArchive,
-  options?: DownloadGitRepoOptions,
+  options?: DownloadGitRepoArchiveOptions,
 ) {
   const { url, filename } = githubRepoArchive
   const outputPath = options?.outputPath ?? DEFAULT_OUTPUT_PATH

@@ -1,4 +1,4 @@
-export interface DownloadGitRepoOptions {
+export interface DownloadGitRepoArchiveOptions {
   /**
    * 下载的输出目录
    *

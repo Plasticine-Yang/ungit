@@ -1,12 +1,12 @@
-export { downloadGitRepo, type DownloadGitRepoOptions } from './download-github-repo'
+export { downloadGitRepo, type DownloadGitRepoArchiveOptions } from './download-github-repo-archive'
 export { extractTarGZ, type ExtractTarGZOptions } from './extract-tar-gz'
 export {
   GithubRepoArchiveCacheManager,
   type GithubRepoArchiveCacheManagerOptions,
 } from './github-repo-archive-cache-manager'
 export {
-  GithubRepoInfoType,
+  GithubRepoRefType,
   GithubRepoResolver,
-  type GithubRepoInfo,
-  type GithubRepoInfoQuery,
+  type GithubRepoRef,
+  type GithubRepoRefQuery,
 } from './github-repo-resolver'

@@ -1,12 +1,12 @@
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
 
-import { resolveGitLsRemoteStdout } from '../resolve-git-ls-remote-stdout'
+import { resolveGithubRepoRefsFromGitLsRemoteStdout } from '../resolve-git-ls-remote-stdout'
 
-describe('resolveGitLsRemoteStdout', () => {
+describe('resolveGithubRepoRefFromGitLsRemoteStdout', () => {
   test('should be succeed', async () => {
     const stdout = await readFile(resolve(__dirname, 'fixtures/git-ls-remote-stdout.txt'), 'utf-8')
-    const result = resolveGitLsRemoteStdout(stdout)
+    const result = resolveGithubRepoRefsFromGitLsRemoteStdout(stdout)
 
     expect(result).toMatchInlineSnapshot(`
       [
@@ -17,22 +17,22 @@ describe('resolveGitLsRemoteStdout', () => {
         },
         {
           "hash": "e96d34f90b383305761c004b825e9d75639b98ca",
-          "name": "feat",
+          "name": "feat/cropperjs-learning",
           "type": "branch",
         },
         {
           "hash": "7082b029edd187c02945f2944a06fcfa104dff87",
-          "name": "feat",
+          "name": "feat/linux",
           "type": "branch",
         },
         {
           "hash": "d9de13557af3a0c8ebe1a66b10d39e6225d07576",
-          "name": "feat",
+          "name": "feat/plasticine-drop",
           "type": "branch",
         },
         {
           "hash": "1b340ab7654f2b6d6f7aba0ecfec8c8fac4c6c21",
-          "name": "feat",
+          "name": "feat/plasticine-react",
           "type": "branch",
         },
         {

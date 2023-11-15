@@ -1,20 +1,20 @@
-import { GithubRepoInfoType } from './enum'
-import type { GithubRepoInfo } from './types'
+import { GithubRepoRefType } from './enum'
+import type { GithubRepoRef } from './types'
 
-export function resolveGitLsRemoteStdout(stdout: string): GithubRepoInfo[] {
-  const githubRepoInfoList: GithubRepoInfo[] = []
+export function resolveGithubRepoRefsFromGitLsRemoteStdout(stdout: string): GithubRepoRef[] {
+  const githubRepoRefs: GithubRepoRef[] = []
 
   for (const reference of stdout.trim().split('\n')) {
     if (reference) {
-      githubRepoInfoList.push(resolveGithubRepoInfo(reference))
+      githubRepoRefs.push(resolveGithubRepoRefFromStdoutReference(reference))
     }
   }
 
-  return githubRepoInfoList
+  return githubRepoRefs
 }
 
 /**
- * 解析 GithubRepoInfo 对象
+ * 从 git ls-remote 的 stdout 中解析出 GithubRepoRef 对象
  *
  * `reference` is like:
  * - 80e56b194c2aea3965247d87a0d68efc925ddca9\tHEAD
@@ -26,35 +26,46 @@ export function resolveGitLsRemoteStdout(stdout: string): GithubRepoInfo[] {
  * - refs/tags/v0.0.1
  *
  */
-function resolveGithubRepoInfo(reference: string): GithubRepoInfo {
+function resolveGithubRepoRefFromStdoutReference(reference: string): GithubRepoRef {
   const [hash, referencePath] = reference.split('\t')
 
   if (referencePath === 'HEAD') {
     return {
-      type: GithubRepoInfoType.HEAD,
+      type: GithubRepoRefType.HEAD,
       name: 'HEAD',
       hash,
     }
   }
 
-  const [, type, referenceName] = referencePath.split('/')
-  let resolvedGithubRepoInfoType: GithubRepoInfoType
+  const splittedReferencePath = referencePath.split('/')
+  const type = splittedReferencePath.at(1)
+
+  // refs/heads/hello-world => referenceName should be `hello-world`
+  // refs/heads/feat/hello-world => referenceName should be `feat/hello-world`
+  const referenceNameItems = splittedReferencePath.slice(2)
+  const referenceName = referenceNameItems.length > 1 ? referenceNameItems.join('/') : referenceNameItems.at(0)
+
+  if (referenceName === undefined) {
+    throw new Error('reference name not found', { cause: reference })
+  }
+
+  let resolvedGithubRepoRefType: GithubRepoRefType
 
   switch (type) {
     case 'heads':
-      resolvedGithubRepoInfoType = GithubRepoInfoType.Branch
+      resolvedGithubRepoRefType = GithubRepoRefType.Branch
       break
 
     case 'tags':
-      resolvedGithubRepoInfoType = GithubRepoInfoType.Tag
+      resolvedGithubRepoRefType = GithubRepoRefType.Tag
       break
 
     default:
-      throw new Error(`unknown referencePath type: ${type}`)
+      throw new Error(`unknown reference type: ${type}`)
   }
 
   return {
-    type: resolvedGithubRepoInfoType,
+    type: resolvedGithubRepoRefType,
     name: referenceName,
     hash,
   }
