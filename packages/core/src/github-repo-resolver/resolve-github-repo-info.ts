@@ -1,10 +1,7 @@
 import { DEFAULT_GITHUB_REPO_INFO_QUERY } from './constants'
 import type { GithubRepoInfo } from './types'
 
-export function resolveGithubRepoInfo(
-  githubRepoInfoList: GithubRepoInfo[],
-  query = DEFAULT_GITHUB_REPO_INFO_QUERY,
-): GithubRepoInfo | null {
+export function resolveGithubRepoInfo(githubRepoInfoList: GithubRepoInfo[], query = DEFAULT_GITHUB_REPO_INFO_QUERY) {
   const { hash, reference } = query
 
   let targetGithubRepoInfo: GithubRepoInfo | null = null
@@ -18,6 +15,10 @@ export function resolveGithubRepoInfo(
       githubRepoInfoList.find((repoInfo) => repoInfo.type === type && repoInfo.name === name) ?? null
   } else {
     targetGithubRepoInfo = null
+  }
+
+  if (targetGithubRepoInfo === null) {
+    throw new Error('github repo info not found')
   }
 
   return targetGithubRepoInfo

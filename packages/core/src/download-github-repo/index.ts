@@ -1,2 +1,2 @@
-export { downloadGitRepo } from './download-github-repo'
+export { downloadGithubRepoArchive as downloadGitRepo } from './download-github-repo-archive'
 export type * from './types'

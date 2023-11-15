@@ -16,3 +16,8 @@ export interface GithubRepoInfoQuery {
   /** 根据 reference 查询 */
   reference?: Pick<GithubRepoInfo, 'type' | 'name'>
 }
+
+export interface GithubRepoArchive {
+  url: string
+  filename: string
+}

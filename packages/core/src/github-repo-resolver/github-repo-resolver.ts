@@ -1,8 +1,6 @@
-import { resolveGithubRepoArchiveUrl } from './resolve-github-repo-archive-url'
 import { resolveGithubRepoInfo } from './resolve-github-repo-info'
 import { resolveGithubRepoInfoList } from './resolve-github-repo-info-list'
-import { resolveGithubRepoUrl } from './resolve-github-repo-url'
-import type { GithubRepoInfo, GithubRepoInfoQuery } from './types'
+import type { GithubRepoArchive, GithubRepoInfo, GithubRepoInfoQuery } from './types'
 
 export class GithubRepoResolver {
   private githubRepoInfoList: GithubRepoInfo[] | null
@@ -12,7 +10,7 @@ export class GithubRepoResolver {
   }
 
   private resolveGithubRepoUrl() {
-    return resolveGithubRepoUrl(this.userRepo)
+    return `https://github.com/${this.userRepo}`
   }
 
   private async resolveGithubRepoInfoList() {
@@ -32,7 +30,14 @@ export class GithubRepoResolver {
     return resolveGithubRepoInfo(githubRepoInfoList, query)
   }
 
-  public async resolveGithubRepoArchiveUrl(hash: string) {
-    return resolveGithubRepoArchiveUrl(this.userRepo, hash)
+  public async resolveGithubRepoArchive(query?: GithubRepoInfoQuery) {
+    const { hash } = await this.resolveGithubRepoInfo(query)
+    const url = `https://github.com/${this.userRepo}/archive/${hash}.tar.gz`
+    const filename = `${hash}.tar.gz`
+
+    return {
+      url,
+      filename,
+    } as GithubRepoArchive
   }
 }
