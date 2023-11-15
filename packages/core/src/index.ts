@@ -7,6 +7,7 @@ export {
 export {
   GithubRepoRefType,
   GithubRepoResolver,
+  type GithubRepoArchive,
   type GithubRepoRef,
   type GithubRepoRefQuery,
 } from './github-repo-resolver'
