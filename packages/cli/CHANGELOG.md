@@ -1,5 +1,14 @@
 # @ungit/cli
 
+## 0.0.3
+
+### Patch Changes
+
+- Minify @ungit/cli package
+- Updated dependencies
+  - @ungit/core@0.0.3
+  - @ungit/shared@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes
