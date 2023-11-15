@@ -8,7 +8,8 @@ describe('downloadGithubRepoArchive', () => {
     'should download archive',
     async () => {
       const githubRepoResolver = new GithubRepoResolver('Plasticine-Yang/Plasticine-Yang.github.io')
-      const githubRepoArchive = await githubRepoResolver.resolveGithubRepoArchive()
+      const githubRepoRef = await githubRepoResolver.resolveGithubRepoRef()
+      const githubRepoArchive = githubRepoResolver.resolveGithubRepoArchive(githubRepoRef)
 
       await downloadGithubRepoArchive(githubRepoArchive, {
         outputPath: resolve(__dirname, 'fixtures'),

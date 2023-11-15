@@ -30,8 +30,8 @@ export class GithubRepoResolver {
     return resolveGithubRepoRef(githubRepoRefs, query)
   }
 
-  public async resolveGithubRepoArchive(query?: GithubRepoRefQuery) {
-    const { hash } = await this.resolveGithubRepoRef(query)
+  public resolveGithubRepoArchive(githubRepoRef: GithubRepoRef) {
+    const { hash } = githubRepoRef
     const url = `https://github.com/${this.userRepo}/archive/${hash}.tar.gz`
     const filename = `${hash}.tar.gz`
 
