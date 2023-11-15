@@ -19,20 +19,6 @@ export class GithubRepoArchiveCacheManager {
     return cachedArchivePath
   }
 
-  /** 查询缓存目录下是否缓存了相关文件 */
-  public async hasCached(userRepo: string, hash: string) {
-    const { cacheDirectoryPath: cachePath } = this.resolvedOptions
-    const cacheFilePath = resolve(cachePath, userRepo, `${hash}.tar.gz`)
-
-    try {
-      const stats = await stat(cacheFilePath)
-
-      return stats.isFile()
-    } catch {
-      return false
-    }
-  }
-
   /** 将仓库压缩包缓存到缓存目录中 */
   public async cacheRepoArchive(archivePath: string, userRepo: string, hash: string) {
     const { cacheDirectoryPath: cachePath } = this.resolvedOptions

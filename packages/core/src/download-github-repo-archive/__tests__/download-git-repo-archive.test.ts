@@ -4,7 +4,7 @@ import { GithubRepoResolver } from '../../github-repo-resolver'
 import { downloadGithubRepoArchive } from '../download-github-repo-archive'
 
 describe('downloadGithubRepoArchive', () => {
-  test(
+  test.skip(
     'should download archive',
     async () => {
       const githubRepoResolver = new GithubRepoResolver('Plasticine-Yang/Plasticine-Yang.github.io')

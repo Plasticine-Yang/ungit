@@ -16,16 +16,6 @@ describe('GithubRepoCacheManager', () => {
     )
   })
 
-  test('should check whether archive has been cached', async () => {
-    // exist
-    const result1 = await manager.hasCached('Plasticine-Yang/ungit', '7a08a89442da03012ed6572d92a68c4a05526473')
-    expect(result1).toBe(true)
-
-    // not exist
-    const result2 = await manager.hasCached('foo/repo1', 'xxx')
-    expect(result2).toBe(false)
-  })
-
   test('should get cached repo archive path', async () => {
     const cachedRepoArchivePath = await manager.getCachedRepoArchivePath(
       'Plasticine-Yang/ungit',
