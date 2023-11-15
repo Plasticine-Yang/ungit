@@ -1,9 +1,9 @@
 import {
   GithubRepoArchiveCacheManager,
-  GithubRepoInfo,
   GithubRepoResolver,
   downloadGitRepo,
   extractTarGZ,
+  type GithubRepoArchive,
 } from '@ungit/core'
 import { ensureDirectoryExist } from '@ungit/shared'
 
@@ -12,73 +12,80 @@ import { resolve } from 'path'
 import { TEMP_DIRECTORY_ROOT_PATH } from './constants'
 import {
   resolveDefaultCommandOptions,
-  resolveGithubRepoInfoQuery,
+  resolveGithubRepoRefQuery,
   resolveSubDirectory,
-  resolveUserRepo,
+  resolveUserRepoInfo,
 } from './helpers'
-import { DefaultCommandOptions } from './types'
+import type { DefaultCommandOptions, DownloadToTempDirectoryOptions } from './types'
 
 export async function defaultCommandAction(
-  userRepo: string,
+  userRepoMaybeWithSubDirectory: string,
   outputPath = process.cwd(),
   options?: DefaultCommandOptions,
 ) {
   const resolvedOptions = resolveDefaultCommandOptions(options)
-  const { repo, resolvedUserRepo, subDirectory } = resolveUserRepo(userRepo)
+  const { cacheDirectoryPath } = resolvedOptions
+  const userRepoInfo = resolveUserRepoInfo(userRepoMaybeWithSubDirectory)
+  const { repo, userRepo, subDirectory } = userRepoInfo
 
-  // 不缓存则先下载到临时目录，提取指定文件到 outputPath 后再删除临时目录
+  const githubRepoRefQuery = resolveGithubRepoRefQuery(resolvedOptions)
+  const githubRepoResolver = new GithubRepoResolver(userRepo)
+  const githubRepoRef = await githubRepoResolver.resolveGithubRepoRef(githubRepoRefQuery)
+  const githubRepoArchive = githubRepoResolver.resolveGithubRepoArchive(githubRepoRef)
+
+  const downloadToTempDirectoryOptions: DownloadToTempDirectoryOptions = {
+    defaultCommandOptions: resolvedOptions,
+    githubRepoRef,
+    userRepoInfo,
+  }
+
+  // 不启用缓存则先下载到临时目录，提取指定文件到 outputPath 后再删除临时目录
   if (!resolvedOptions.cache) {
-    await download(userRepo, outputPath, resolvedOptions)
+    await downloadToTempDirectory(githubRepoArchive, outputPath, downloadToTempDirectoryOptions)
     return
   }
 
-  // 缓存则优先从缓存目录中读取缓存文件，有缓存则直接提取缓存文件的指定文件到 outputPath
-  // 无缓存则触发下载的逻辑，并将下载的临时目录中的文件放到缓存目录中，再将临时目录删除
-  const githubRepoResolver = new GithubRepoResolver(resolvedUserRepo)
-  const githubRepoInfo = await githubRepoResolver.resolveGithubRepoInfo(resolveGithubRepoInfoQuery(resolvedOptions))
+  // 启用缓存则优先从缓存目录中读取缓存文件
+  // - 有缓存则直接提取缓存文件的指定文件到 outputPath
+  // - 无缓存则触发下载的逻辑，并将下载的临时目录中的文件放到缓存目录中，再将临时目录删除
+  const manager = new GithubRepoArchiveCacheManager({ cacheDirectoryPath })
+  const cachedRepoArchivePath = await manager.getCachedRepoArchivePath(userRepo, githubRepoRef.hash)
 
-  if (githubRepoInfo !== null) {
-    const manager = new GithubRepoArchiveCacheManager({ cacheDirectoryPath: resolvedOptions.cacheDirectoryPath })
-    const cachedRepoArchivePath = await manager.getCachedRepoArchivePath(resolvedUserRepo, githubRepoInfo.hash)
-
-    if (cachedRepoArchivePath) {
-      console.log('缓存命中')
-      try {
-        const resolvedSubDirectory = resolveSubDirectory(repo, githubRepoInfo.hash, subDirectory)
-        extractTarGZ(cachedRepoArchivePath, outputPath, { subDirectory: resolvedSubDirectory })
-      } catch (error) {
-        // 提取失败时兜底触发下载逻辑
-        await download(userRepo, outputPath, resolvedOptions, true, githubRepoInfo)
-      }
-    } else {
-      console.log('没有缓存')
-      await download(userRepo, outputPath, resolvedOptions, true, githubRepoInfo)
+  if (cachedRepoArchivePath) {
+    console.log('缓存命中')
+    try {
+      const resolvedSubDirectory = resolveSubDirectory(repo, githubRepoRef.hash, subDirectory)
+      extractTarGZ(cachedRepoArchivePath, outputPath, { subDirectory: resolvedSubDirectory })
+    } catch (error) {
+      // 提取失败时兜底触发下载逻辑
+      await downloadToTempDirectory(githubRepoArchive, outputPath, downloadToTempDirectoryOptions)
     }
   } else {
-    throw new Error('github repo info not found')
+    console.log('没有缓存')
+    await downloadToTempDirectory(githubRepoArchive, outputPath, downloadToTempDirectoryOptions)
   }
 }
 
 /** 下载到临时目录 */
-async function download(
-  userRepo: string,
+async function downloadToTempDirectory(
+  githubRepoArchive: GithubRepoArchive,
   outputPath: string,
-  defaultCommandOptions: DefaultCommandOptions,
-  enableCache?: boolean,
-  githubRepoInfo?: GithubRepoInfo,
+  options: DownloadToTempDirectoryOptions,
 ) {
-  const { repo, resolvedUserRepo, subDirectory } = resolveUserRepo(userRepo)
-  const tempDirectoryPath = resolve(TEMP_DIRECTORY_ROOT_PATH, resolvedUserRepo)
-  const manager = new GithubRepoArchiveCacheManager({ cacheDirectoryPath: defaultCommandOptions.cacheDirectoryPath })
+  const { githubRepoRef } = options
+  const { cacheDirectoryPath, cache } = options.defaultCommandOptions
+  const { repo, userRepo, subDirectory } = options.userRepoInfo
+
+  const tempDirectoryPath = resolve(TEMP_DIRECTORY_ROOT_PATH, userRepo)
+  const githubRepoArchiveCacheManager = new GithubRepoArchiveCacheManager({ cacheDirectoryPath })
 
   // 确保临时目录存在
   await ensureDirectoryExist(tempDirectoryPath)
 
   // 下载文件到临时目录中
   console.log('downloading...')
-  const { downloadedFilePath, downloadedGithubRepoInfo } = await downloadGitRepo(resolvedUserRepo, {
+  const downloadedFilePath = await downloadGitRepo(githubRepoArchive, {
     outputPath: tempDirectoryPath,
-    githubRepoInfoQuery: resolveGithubRepoInfoQuery(defaultCommandOptions),
     onProgress(downloadedSize, totalSize) {
       console.log(downloadedSize, totalSize)
     },
@@ -86,12 +93,12 @@ async function download(
   console.log('download success')
 
   // 提取指定文件到 outputPath - github 下载的压缩包会有一个 repo-hash 的一级目录，要与外部传入的子目录拼接才能作为真正的子目录
-  const resolvedSubDirectory = resolveSubDirectory(repo, downloadedGithubRepoInfo.hash, subDirectory)
+  const resolvedSubDirectory = resolveSubDirectory(repo, githubRepoRef.hash, subDirectory)
   await extractTarGZ(downloadedFilePath, outputPath, { subDirectory: resolvedSubDirectory })
 
   // 如果启用了缓存则将下载的文件缓存到缓存目录中
-  if (enableCache && githubRepoInfo) {
-    await manager.cacheRepoArchive(downloadedFilePath, resolvedUserRepo, githubRepoInfo.hash)
+  if (cache) {
+    await githubRepoArchiveCacheManager.cacheRepoArchive(downloadedFilePath, userRepo, githubRepoRef.hash)
   }
 
   // 删除临时目录

@@ -1,3 +1,5 @@
+import type { GithubRepoRef } from '@ungit/core'
+
 export interface DefaultCommandOptions {
   /** 指定要下载的 hash - 优先级最高 */
   hash?: string
@@ -13,4 +15,17 @@ export interface DefaultCommandOptions {
 
   /** 是否使用缓存 */
   cache?: boolean
+}
+
+export interface UserRepoInfo {
+  user: string
+  repo: string
+  userRepo: string
+  subDirectory: string
+}
+
+export interface DownloadToTempDirectoryOptions {
+  userRepoInfo: UserRepoInfo
+  defaultCommandOptions: DefaultCommandOptions
+  githubRepoRef: GithubRepoRef
 }
