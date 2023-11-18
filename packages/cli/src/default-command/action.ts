@@ -25,13 +25,28 @@ export async function defaultCommandAction(
   outputPath = process.cwd(),
   options?: DefaultCommandOptions,
 ) {
+  const spinner = ora()
+
   const resolvedOptions = resolveDefaultCommandOptions(options)
   const { cacheDirectoryPath } = resolvedOptions
   const userRepoInfo = resolveUserRepoInfo(userRepoMaybeWithSubDirectory)
   const { repo, userRepo, subDirectory } = userRepoInfo
 
   const githubRepoRefQuery = resolveGithubRepoRefQuery(resolvedOptions)
-  const githubRepoResolver = new GithubRepoResolver(userRepo)
+  const githubRepoResolver = new GithubRepoResolver(userRepo, {
+    beforeResolveRepoRefs() {
+      spinner.start('Start resolve repository refs...')
+    },
+
+    onResolveRepoRefsSuccess() {
+      spinner.succeed('Resolve repository refs succeed!')
+    },
+
+    onResolveRepoRefsFailed(error) {
+      spinner.fail('Resolve repository refs failed!')
+      console.error(error)
+    },
+  })
   const githubRepoRef = await githubRepoResolver.resolveGithubRepoRef(githubRepoRefQuery)
   const githubRepoArchive = githubRepoResolver.resolveGithubRepoArchive(githubRepoRef)
 
