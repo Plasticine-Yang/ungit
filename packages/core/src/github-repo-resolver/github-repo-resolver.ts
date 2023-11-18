@@ -1,11 +1,13 @@
+import type { ExecException } from 'child_process'
+
 import { resolveGithubRepoRef } from './resolve-github-repo-info'
 import { resolveGithubRepoRefs } from './resolve-github-repo-info-list'
-import type { GithubRepoArchive, GithubRepoRef, GithubRepoRefQuery } from './types'
+import type { GithubRepoArchive, GithubRepoRef, GithubRepoRefQuery, GithubRepoResolverOptions } from './types'
 
 export class GithubRepoResolver {
   private githubRepoRefs: GithubRepoRef[] | null
 
-  constructor(private userRepo: string) {
+  constructor(private userRepo: string, private options?: GithubRepoResolverOptions) {
     this.githubRepoRefs = null
   }
 
@@ -25,7 +27,19 @@ export class GithubRepoResolver {
   }
 
   public async resolveGithubRepoRef(query?: GithubRepoRefQuery) {
+    this.options?.beforeResolveRepoRefs?.()
+
     const githubRepoRefs = await this.resolveGithubRepoRefs()
+      .then((result) => {
+        this.options?.onResolveRepoRefsSuccess?.()
+
+        return result
+      })
+      .catch((error) => {
+        this.options?.onResolveRepoRefsFailed?.(error as ExecException | null)
+
+        throw error
+      })
 
     return resolveGithubRepoRef(githubRepoRefs, query)
   }

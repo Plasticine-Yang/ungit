@@ -1,3 +1,5 @@
+import type { ExecException } from 'child_process'
+
 import type { GithubRepoRefType } from './enum'
 
 export interface GithubRepoRef {
@@ -20,4 +22,10 @@ export interface GithubRepoRefQuery {
 export interface GithubRepoArchive {
   url: string
   filename: string
+}
+
+export interface GithubRepoResolverOptions {
+  beforeResolveRepoRefs?(): void
+  onResolveRepoRefsSuccess?(): void
+  onResolveRepoRefsFailed?(error: ExecException | null): void
 }
