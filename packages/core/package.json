@@ -26,8 +26,7 @@
   "dependencies": {
     "@ungit/shared": "workspace:*",
     "axios": "^1.6.1",
-    "tar": "^6.1.9",
-    "zlib": "^1.0.5"
+    "tar": "^6.1.9"
   },
   "devDependencies": {
     "@types/tar": "^6.1.9"
