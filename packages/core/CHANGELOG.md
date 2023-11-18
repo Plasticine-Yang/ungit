@@ -1,5 +1,15 @@
 # @ungit/core
 
+## 0.1.0
+
+### Minor Changes
+
+- feat: support lifecycle of resolving github repository refs
+
+### Patch Changes
+
+- @ungit/shared@0.1.0
+
 ## 0.0.4
 
 ### Patch Changes

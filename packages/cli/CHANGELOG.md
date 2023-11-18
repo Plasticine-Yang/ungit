@@ -1,5 +1,17 @@
 # @ungit/cli
 
+## 0.1.0
+
+### Minor Changes
+
+- feat: support lifecycle of resolving github repository refs
+
+### Patch Changes
+
+- Updated dependencies
+  - @ungit/core@0.1.0
+  - @ungit/shared@0.1.0
+
 ## 0.0.4
 
 ### Patch Changes
